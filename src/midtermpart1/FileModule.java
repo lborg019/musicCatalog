@@ -78,7 +78,7 @@ public class FileModule
         catalog.add(addedAlbum);
     }
     
-    //addes entry to text file
+    //addes entry to text file ~T
     public void addToFile(AlbumModule addedAlbum) throws IOException
     {   
         try(FileWriter fw = new FileWriter(file ,true)) //true to append
@@ -90,17 +90,9 @@ public class FileModule
             //since tracks are in an array, write them accordingly
             for (int i = 0; i < addedAlbum.amTracks.size(); i++)
             {
-                if(i == addedAlbum.amTracks.size()-1)
-                {
-                    //the last track in the array gets printed with a new line
-                    fw.write(addedAlbum.amTracks.get(i) + "\n");
-                }
-                else
-                {
-                    //all others are just separated by spaces
-                    fw.write(addedAlbum.amTracks.get(i) + " ");
-                }
+                fw.write(addedAlbum.amTracks.get(i) + " ");                
             }
+            fw.write(addedAlbum.amTracks.get(addedAlbum.amTracks.size() -1) + "\n");
         }
     }
     

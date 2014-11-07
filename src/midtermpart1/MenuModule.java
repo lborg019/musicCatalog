@@ -82,17 +82,7 @@ public class MenuModule
                     break;
                     
                 case 2: option = 2; //search by artist
-                
-                    aIndex = searchArtist();//defining a method also calls it!
-                    if(aIndex[0] < 0)//binary search did not find the artist
-                    {
-                        System.out.println("Artist not found.\n");
-                        break;
-                    }
-                    else
-                        //passing middle index, lower and upper bound)
-                        outputSearch(option, aIndex[0], aIndex[1], aIndex[2]);
-                    
+                searchArtist();
                     break;
                 
                 case 3: option = 3; //add album to catalog
@@ -143,58 +133,34 @@ public class MenuModule
         return fl;
     }
     
-    public int[] searchArtist()
+    public String searchArtist()
     {
-        int fl; //flag for binarySearch
-        int[] aFlags = new int[3]; //holds all flags (lower, upper and middle)
         
-        String strEntry;
         System.out.println("Please type in artist's name:");
-        scanner.nextLine();
-        strEntry = scanner.nextLine().toLowerCase().replaceAll("\\s", "_");
+        String input = new Scanner(System.in).next().toLowerCase().replaceAll("\\s", "_");
         
         //create an object with artist name only            
-        AlbumModule artistTarget = new AlbumModule(strEntry, null, null);
+        AlbumModule artistTarget = new AlbumModule(input, null, null);
         
         //search for this object (no comparator, using comparable instead):
-        fl = Collections.binarySearch(sort.aByArtist, artistTarget);
+        int index = Collections.binarySearch(sort.aByArtist, artistTarget);
         
-        if(fl < 0) //if artist is not found
-        { 
-            aFlags[0] = -1; //this negative will break the do loop
-            aFlags[1] = 0;
-            aFlags[2] = 0;
-            return aFlags;
-        }
-        else
-        {
-            /*
-            *  Binary Search is yielding the middle value
-            *  for repeated artists.
-            */
-            
-            //find last occurrence (higher bound)
-            int lastIndex = fl - 1;
-            for (int i = fl; i < sort.getaByArtist().size(); i++)
-            {
-                if(sort.getaByArtist().get(i).amArtist.equals(artistTarget.getArtist()))
-                    lastIndex++;
+            int firstIndex = index;
+            while(artistTarget.compareTo(sort.aByArtist.get(firstIndex-1)) == 0){
+                --firstIndex;
             }
             
-            //find first occurrence (lower bound)
-            int firstIndex = lastIndex + 1;
-            for (int i = lastIndex; i >= 0; i--)
-            {
-                if(sort.getaByArtist().get(i).amArtist.equals(artistTarget.getArtist()))
-                    firstIndex--;
+            int lastIndex = index;
+            while(artistTarget.compareTo(sort.aByArtist.get(lastIndex+1)) == 0){
+                ++firstIndex;
             }
             
-            aFlags[0] = fl;
-            aFlags[1] = firstIndex;
-            aFlags[2] = lastIndex;
+            String accumulator = "";
+            for(AlbumModule s : sort.aByAlbum.subList(firstIndex, lastIndex+1)){
+                accumulator += s;
+            }
             
-            return aFlags;
-        }
+            return accumulator;
     }
     
     public void outputSearch(int option, int aIndex, int fIndex, int lIndex)
@@ -224,23 +190,19 @@ public class MenuModule
     {
         int option;
         AlbumModule addedModule;
-        
-        String addedArtist;
-        String addedAlbum;
-        String addedTracks;
-        
+         
         //artist
         System.out.println("Please enter the artist's name:");
         scanner.nextLine(); //clear buffer
-        addedArtist = scanner.nextLine().toLowerCase().replaceAll("\\s", "_");
+        String addedArtist = scanner.nextLine().toLowerCase().replaceAll("\\s", "_");
         
         //album
         System.out.println("Please enter the album name:");
-        addedAlbum = scanner.nextLine().toLowerCase().replaceAll("\\s", "_");
+        String addedAlbum = scanner.nextLine().toLowerCase().replaceAll("\\s", "_");
         
         //tracks
         System.out.println("Please enter the track: ");
-        addedTracks = scanner.nextLine().toLowerCase().replaceAll("\\s", "_");
+        String addedTracks = scanner.nextLine().toLowerCase().replaceAll("\\s", "_");
         addedTrackList.add(addedTracks);
         
         do
